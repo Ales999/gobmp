@@ -118,7 +118,7 @@ func (srv *bmpServer) bmpWorker(client net.Conn) {
 
 // NewBMPServer instantiates a new instance of BMP Server
 func NewBMPServer(sPort, dPort int, intercept bool, p pub.Publisher, splitAF bool) (BMPServer, error) {
-	incoming, err := net.Listen("tcp", fmt.Sprintf(":%d", sPort))
+	incoming, err := net.Listen("tcp4", fmt.Sprintf(":%d", sPort))
 	if err != nil {
 		glog.Errorf("fail to setup listener on port %d with error: %+v", sPort, err)
 		return nil, err

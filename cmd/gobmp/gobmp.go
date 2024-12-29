@@ -18,20 +18,21 @@ import (
 	"github.com/sbezverk/gobmp/pkg/kafka"
 	"github.com/sbezverk/gobmp/pkg/nats"
 	"github.com/sbezverk/gobmp/pkg/pub"
+	"github.com/sbezverk/gobmp/pkg/udpsend"
 	"github.com/sbezverk/tools"
 )
 
 var (
-	dstPort   int
-	srcPort   int
-	perfPort  int
-	kafkaSrv  string
+	dstPort           int
+	srcPort           int
+	perfPort          int
+	kafkaSrv          string
 	kafkaTpRetnTimeMs string // Kafka topic retention time in ms
-	natsSrv   string
-	intercept string
-	splitAF   string
-	dump      string
-	file      string
+	natsSrv           string
+	intercept         string
+	splitAF           string
+	dump              string
+	file              string
 )
 
 func init() {
@@ -80,9 +81,16 @@ func main() {
 			os.Exit(1)
 		}
 		glog.V(5).Infof("NATS publisher has been successfully initialized.")
+	case "udp":
+		publisher, err = udpsend.NewUdpSend("localhost", "18901")
+		if err != nil {
+			glog.Errorf("failed to initialize udp publisher with error: %+v", err)
+			os.Exit(1)
+		}
+		glog.V(5).Infof("udp publisher has been successfully initialized.")
 	default:
 		kConfig := &kafka.Config{
-			ServerAddress: kafkaSrv,
+			ServerAddress:        kafkaSrv,
 			TopicRetentionTimeMs: kafkaTpRetnTimeMs,
 		}
 		publisher, err = kafka.NewKafkaPublisher(kConfig)
